@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Login / Sign Up — MyPortfolio</title>
+  <style>
+    :root{
+      --accent:#0077ff; --accent-dark:#005fd1;
+      --bg:#f5f7fb; --card:#fff; --danger:#c62828;
+      --success:#2e7d32;
+    }
+    *{box-sizing:border-box;}
+    body{
+      font-family:Inter,Segoe UI,Arial;
+      background:var(--bg);
+      margin:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height:100vh;
+    }
+    .card{
+      width:360px;
+      background:var(--card);
+      padding:28px;
+      border-radius:12px;
+      box-shadow:0 8px 30px rgba(15,15,15,0.08);
+      border:1px solid #eef2f6;
+    }
+    h2{margin:0 0 12px 0; font-size:1.25rem;}
+    .muted{color:#666; margin-bottom:18px; font-size:0.95rem;}
+    input{
+      width:100%; padding:10px 12px; margin:8px 0;
+      border:1px solid #d7dee6; border-radius:8px; font-size:0.95rem;
+    }
+    button{
+      width:100%; padding:11px;
+      border-radius:10px; border:none;
+      background:var(--accent); color:#fff;
+      font-weight:700; cursor:pointer;
+      transition:background .2s;
+    }
+    button:hover{background:var(--accent-dark);}
+    button:disabled{opacity:0.6; cursor:not-allowed;}
+    .err{color:var(--danger); font-size:0.9rem; min-height:20px; margin-top:8px;}
+    .info{color:var(--success); font-size:0.9rem; min-height:20px; margin-top:8px;}
+    .small{font-size:0.85rem; color:#555; margin-top:10px; text-align:center;}
+    .link{color:var(--accent); cursor:pointer; text-decoration:underline;}
+  </style>
+</head>
+<body>
+  <div class="card" id="loginCard">
+    <h2>Login</h2>
+    <div class="muted">Enter your credentials to continue.</div>
+
+    <form id="loginForm" autocomplete="off">
+      <label class="small">Email</label>
+      <input id="loginEmail" type="email" placeholder="you@example.com" required />
+
+      <label class="small">Password</label>
+      <input id="loginPass" type="password" placeholder="Password" required />
+
+      <div id="loginErr" class="err"></div>
+      <div id="loginInfo" class="info"></div>
+
+      <button type="submit">Sign in</button>
+      <div class="small">
+        Don’t have an account?
+        <span class="link" id="goSignup">Sign Up</span>
+      </div>
+    </form>
+  </div>
+
+  <div class="card" id="signupCard" style="display:none;">
+    <h2>Sign Up</h2>
+    <div class="muted">Create your account to access the site.</div>
+
+    <form id="signupForm" autocomplete="off">
+      <label class="small">Email</label>
+      <input id="signupEmail" type="email" placeholder="you@example.com" required />
+
+      <label class="small">Password</label>
+      <input id="signupPass" type="password" placeholder="Create a password" required />
+
+      <label class="small">Confirm Password</label>
+      <input id="signupConfirm" type="password" placeholder="Re-enter password" required />
+
+      <div id="signupErr" class="err"></div>
+      <div id="signupInfo" class="info"></div>
+
+      <button type="submit">Create Account</button>
+      <div class="small">
+        Already have an account?
+        <span class="link" id="goLogin">Login</span>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    // Get elements
+    const loginCard = document.getElementById('loginCard');
+    const signupCard = document.getElementById('signupCard');
+    const goSignup = document.getElementById('goSignup');
+    const goLogin = document.getElementById('goLogin');
+
+    // Switch forms
+    goSignup.onclick = () => { loginCard.style.display = 'none'; signupCard.style.display = 'block'; };
+    goLogin.onclick = () => { signupCard.style.display = 'none'; loginCard.style.display = 'block'; };
+
+    // --- Sign Up Logic ---
+    const signupForm = document.getElementById('signupForm');
+    const signupEmail = document.getElementById('signupEmail');
+    const signupPass = document.getElementById('signupPass');
+    const signupConfirm = document.getElementById('signupConfirm');
+    const signupErr = document.getElementById('signupErr');
+    const signupInfo = document.getElementById('signupInfo');
+
+    signupForm.addEventListener('submit', e => {
+      e.preventDefault();
+      signupErr.textContent = '';
+      signupInfo.textContent = '';
+
+      const email = signupEmail.value.trim();
+      const pass = signupPass.value;
+      const confirm = signupConfirm.value;
+
+      if(!email || !pass || !confirm){
+        signupErr.textContent = 'All fields are required.';
+        return;
+      }
+      if(pass.length < 6){
+        signupErr.textContent = 'Password must be at least 6 characters.';
+        return;
+      }
+      if(pass !== confirm){
+        signupErr.textContent = 'Passwords do not match.';
+        return;
+      }
+
+      // Save to localStorage
+      localStorage.setItem('userEmail', email);
+      localStorage.setItem('userPass', pass);
+
+      signupInfo.textContent = 'Account created successfully! Please login.';
+      setTimeout(()=>{
+        signupCard.style.display='none';
+        loginCard.style.display='block';
+      },1200);
+    });
+
+    // --- Login Logic ---
+    const loginForm = document.getElementById('loginForm');
+    const loginEmail = document.getElementById('loginEmail');
+    const loginPass = document.getElementById('loginPass');
+    const loginErr = document.getElementById('loginErr');
+    const loginInfo = document.getElementById('loginInfo');
+
+    loginForm.addEventListener('submit', e => {
+      e.preventDefault();
+      loginErr.textContent='';
+      loginInfo.textContent='';
+
+      const email = loginEmail.value.trim();
+      const pass = loginPass.value;
+
+      const savedEmail = localStorage.getItem('userEmail');
+      const savedPass = localStorage.getItem('userPass');
+
+      if(!savedEmail || !savedPass){
+        loginErr.textContent = 'No account found. Please sign up first.';
+        return;
+      }
+      if(email === savedEmail && pass === savedPass){
+        sessionStorage.setItem('loggedIn','true');
+        loginInfo.textContent = 'Login successful! Redirecting...';
+        setTimeout(()=>window.location.href='index.html',1000);
+      } else {
+        loginErr.textContent = 'Invalid email or password.';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+/* home.css */
+
+.btn-custom {
+  padding: 12px 24px;
+  background-color: #4f46e5; /* Indigo 600 */
+  color: #fff;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  display: inline-block;
+}
+
+.btn-custom:hover {
+  background-color: #4338ca; /* Indigo 700 */
+  transform: scale(1.05);
+}
+
+.button-group {
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+h1, h2 {
+  font-family: 'Segoe UI', sans-serif;
+}
